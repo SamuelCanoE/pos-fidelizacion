@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Caja registradora</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
+<style>
+:root{--fondo:#f6f7fb;--tarjeta:#fff;--texto:#3b4658;--suave:#7d8794;--borde:#e8ebf1;
+--verde:#d6efe3;--verde-t:#2e6a50;--azul:#dbe9f8;--azul-t:#34577e;--lila:#e8e3f8;--lila-t:#51478b;--durazno:#fde7d7;--durazno-t:#8a5230;--rosa:#fbe0e5;--rosa-t:#8e3b4e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--texto);font:16px/1.5 'Nunito',system-ui,sans-serif}
+header{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 24px;background:var(--tarjeta);border-bottom:1px solid var(--borde)}
+h1{font-size:1.15rem;margin:0}h2{font-size:1.05rem;margin:0 0 4px}h3{font-size:.95rem;margin:16px 0 6px}
+.tabs{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.tab{border:0;background:none;padding:8px 14px;border-radius:10px;color:var(--suave);font:inherit;font-weight:600;cursor:pointer}
+.tab:hover{background:var(--fondo)}.tab.on{background:var(--azul);color:var(--azul-t)}
+main{max-width:1150px;margin:0 auto;padding:20px}
+.tab-panel{display:none}.tab-panel.on{display:block}
+.guia{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;background:var(--azul);color:var(--azul-t);border-radius:14px;padding:12px 18px;margin-bottom:18px}
+.guia p{margin:0;font-weight:700}
+.link{background:none;border:0;color:inherit;text-decoration:underline;font:inherit;cursor:pointer;padding:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;align-items:start}
+@media(max-width:960px){.grid3,.grid2{grid-template-columns:1fr}}
+.card{background:var(--tarjeta);border:1px solid var(--borde);border-radius:16px;padding:18px}
+.que,small{color:var(--suave)}.que{margin:0 0 12px;font-size:.9rem}
+.btn{border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--verde);color:var(--verde-t)}
+.btn:hover:not(:disabled){filter:brightness(.96)}.btn:disabled{opacity:.5;cursor:default}
+.btn.azul{background:var(--azul);color:var(--azul-t)}.btn.lila{background:var(--lila);color:var(--lila-t)}.btn.durazno{background:var(--durazno);color:var(--durazno-t)}
+.btn.rosa{background:var(--rosa);color:var(--rosa-t)}.btn.gris{background:#fff;border:1px solid var(--borde);color:var(--texto)}
+.btn.sm{padding:5px 12px;font-size:.9rem}.btn.grande{padding:12px 24px;font-size:1.05rem}.off{opacity:.5}
+.ahora{box-shadow:0 0 0 3px #b9d5f2}
+:focus-visible{outline:3px solid #7aa7e0;outline-offset:2px}
+select,input[type=text],input[type=number]{font:inherit;color:var(--texto);background:#fff;border:1px solid var(--borde);border-radius:10px;padding:7px 10px}
+input[type=text]{width:150px}input[type=number]{width:76px}
+.fila{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.vacio{color:var(--suave);margin:8px 0;font-size:.95rem}
+.av{display:inline-grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;font-weight:700;font-size:.8rem}.av.sm{width:26px;height:26px;font-size:.7rem}
+.cliente{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--borde);border-radius:12px;cursor:grab}
+.cliente.sobre{background:var(--verde);border-color:var(--verde-t)}.cliente.arrastrando{opacity:.5}
+.info{flex:1;display:grid;line-height:1.25}
+.lane{border-radius:14px;padding:12px;margin-bottom:12px}.lane#lanen{background:var(--azul)}.lane#lanep{background:var(--durazno)}
+.lane h3{margin:0;display:flex;justify-content:space-between}.lane>small{color:inherit;opacity:.75;display:block;margin-bottom:6px}
+.lane ol{margin:8px 0 10px;padding-left:22px;display:grid;gap:4px}.lane li small{margin-left:6px;color:inherit;opacity:.7}
+.lane .btn{background:#fff;color:var(--texto)}
+#actual{margin:0 0 10px;font-weight:700}
+.prods{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin:10px 0}
+.prod{display:grid;justify-items:center;gap:0;padding:10px 4px;border:1px solid var(--borde);border-radius:12px;background:#fff;font:inherit;cursor:pointer;color:var(--texto)}
+.prod:hover{background:var(--verde)}.prod .em{font-size:1.8rem;line-height:1.2}.prod small{font-size:.85rem}
+.ticket{background:#fcfcf7;border:1px dashed #d9dbd0;border-radius:12px;padding:12px 14px;font-size:.95rem}
+.ticket .l{display:flex;justify-content:space-between;gap:8px}.ticket hr{border:0;border-top:1px dashed #d9dbd0;margin:8px 0}.ticket .tot{font-weight:700}.ticket .desc{color:var(--verde-t)}
+.acciones{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}.acciones .grande{margin-left:auto}
+.hint{margin:10px 0 0;font-size:.82rem;color:var(--suave)}
+.fam{background:var(--verde);color:var(--verde-t);border-radius:12px;padding:10px 14px;margin-bottom:8px}.fam small{color:inherit;opacity:.8;display:block}
+#hist{list-style:none;margin:0;padding:0;display:grid;gap:6px;max-height:340px;overflow:auto}
+.venta{display:flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--borde);border-radius:12px}.venta>div{flex:1;display:grid;line-height:1.25}
+.est-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+.viz{min-height:110px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.cadena,.doble{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.et{font-size:.8rem;color:var(--suave)}
+.nodo-c,.nd{background:var(--azul);color:var(--azul-t);border-radius:10px;padding:4px 10px;font-weight:600;display:inline-flex;gap:6px;align-items:center}.nd{display:grid;text-align:center;line-height:1.2}.nd small{color:inherit;opacity:.8}
+.tree{width:100%;height:auto;max-height:240px}.tree line{stroke:#c5ccd8;stroke-width:2}.tree text{font:700 12px Nunito,sans-serif;fill:#3b4658}
+.tree .p0 circle{fill:#f8cfae}.tree .p1 circle{fill:#bcd7f3}.tree .p2 circle{fill:#dde2ea}.tree .raiz circle{stroke:#3b4658;stroke-width:2.5}
+.arr{display:flex;gap:4px;flex-wrap:wrap}.arr span{border:1px solid var(--borde);border-radius:8px;padding:1px 8px;font-size:.8rem}
+.torre{display:grid;gap:4px}.bloque{background:var(--verde);color:var(--verde-t);border-radius:10px;padding:5px 12px;font-weight:600;display:flex;justify-content:space-between}.bloque:first-child{background:#b9e3cf}
+.bolsa{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--durazno);border-radius:22px}.bolsa span{background:var(--durazno);color:var(--durazno-t);border-radius:10px;padding:3px 10px;font-weight:600}
+.uf{overflow-x:auto}.uf table{border-collapse:separate;border-spacing:3px}.uf th{font-size:.75rem;color:var(--suave);text-align:right;padding-right:6px;font-weight:600}
+.uf td{min-width:38px;text-align:center;border:1px solid var(--borde);border-radius:8px;font-size:.85rem;padding:2px 4px}.uf td.raiz{background:var(--verde);color:var(--verde-t);border-color:var(--verde)}
+.chip{display:inline-block;background:var(--lila);color:var(--lila-t);border-radius:99px;padding:2px 10px;font-size:.82rem;font-weight:600;margin:2px 4px 2px 0}
+table.m{width:100%;border-collapse:collapse;font-size:.92rem}table.m th{text-align:left;color:var(--suave);font-size:.78rem;padding:6px;font-weight:600}
+table.m td{padding:6px;border-top:1px solid var(--borde)}table.m td:nth-child(n+2):nth-child(-n+4){text-align:right}
+td.barra{width:24%}td.barra i{display:block;height:8px;border-radius:99px}td.barra i.mem{background:#a8dcc3}td.barra i.db{background:#b9c8f0}
+.resumen{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}.resumen>div{flex:1;min-width:180px;background:var(--fondo);border-radius:12px;padding:10px 14px}.resumen b{display:block;font-size:1.3rem}
+#log{background:#f1f4f8;color:#44526a;font:12.5px/1.55 ui-monospace,Consolas,monospace;border-radius:12px;padding:12px;margin:0;max-height:300px;overflow:auto;white-space:pre-wrap}
+#toasts{position:fixed;right:16px;bottom:16px;display:grid;gap:8px;z-index:60}
+.toast{background:#fff;border:1px solid var(--borde);border-left:6px solid #a8dcc3;padding:10px 16px;border-radius:12px;box-shadow:0 6px 20px rgba(60,70,90,.12);max-width:340px}.toast.err{border-left-color:#f1a9b8}
+dialog{border:0;border-radius:18px;padding:0;max-width:420px;width:92%;background:transparent}dialog::backdrop{background:rgba(60,70,90,.3)}
+.modal{background:#fff;border-radius:18px;padding:22px;display:grid;gap:12px}.modal h3{margin:0;font-size:1.2rem}.modal p{margin:0}
+.puntos{display:flex;gap:6px;justify-content:center}.puntos i{width:8px;height:8px;border-radius:50%;background:var(--borde)}.puntos i.on{background:var(--azul-t)}
+.nav{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+details summary{cursor:pointer;color:var(--suave);font-size:.9rem;margin-top:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.chips button{border:1px solid var(--borde);background:#fff;border-radius:99px;padding:3px 12px;font:inherit;font-size:.88rem;cursor:pointer;color:var(--texto)}.chips button:hover{background:var(--verde)}
+.perfil{background:var(--fondo);border-radius:14px;padding:14px;margin-top:8px}.fila-p{display:flex;align-items:center;gap:10px}
+.datos{list-style:none;margin:10px 0;padding:0;display:grid;gap:4px;font-size:.93rem}.datos li::before{content:"· ";color:var(--suave)}.datos li.si{color:var(--verde-t);font-weight:700}
+.perfil p{margin:0 0 8px}
+</style></head>
+<body>
+<header>
+  <h1>Caja registradora</h1>
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button class="tab on" role="tab" aria-selected="true" data-tab="caja">Caja</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="familias">Familias e historial</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="estructuras">Por dentro</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="tiempos">Tiempos y registros</button>
+  </nav>
+  <button class="btn lila sm" onclick="abrirAyuda(0)">¿Cómo se usa?</button>
+</header>
+<main>
+<section id="tab-caja" class="tab-panel on">
+  <div class="guia" aria-live="polite"><p id="guiaTexto"></p><span><button class="link" id="btnDemo" onclick="demo()">Ver demostración</button><button class="link" id="btnStopDemo" onclick="detenerDemo()" hidden>Detener demostración</button></span></div>
+  <div class="grid3">
+    <section class="card">
+      <h2>Paso 1 · ¿Quién llega?</h2>
+      <p class="que">Escriba el nombre del cliente. El sistema muestra su familia, sus puntos y si tiene descuento.</p>
+      <input id="buscar" type="text" list="listaClientes" placeholder="Nombre del cliente" autocomplete="off" aria-label="Nombre del cliente" oninput="pintarPerfil()" style="width:100%">
+      <datalist id="listaClientes"></datalist>
+      <div id="chips" class="chips"></div>
+      <div id="perfil"></div>
+    </section>
+    <section class="card">
+      <h2>Paso 2 · Filas de pago</h2>
+      <p class="que">Llame al siguiente cliente para pasarlo a la caja.</p>
+      <div class="lane" id="lanen"><h3>Fila normal <span id="cntN">0</span></h3><small>Se atiende por orden de llegada</small><ol id="fNormal"></ol><button class="btn sm" onclick="sig('normal')">Llamar siguiente</button></div>
+      <div class="lane" id="lanep"><h3>Caja preferencial <span id="cntP">0</span></h3><small>Primero las embarazadas, luego los mayores de 65 años</small><ol id="fPref"></ol><button class="btn sm" onclick="sig('preferencial')">Llamar siguiente</button></div>
+    </section>
+    <section class="card">
+      <h2>Pasos 3 y 4 · Caja</h2>
+      <p class="que">Toque los productos y luego cobre.</p>
+      <p id="actual"></p>
+      <div id="productos" class="prods"></div>
+      <div id="ticket" class="ticket"></div>
+      <div class="acciones">
+        <button class="btn gris sm" id="bDeshacer" onclick="deshacer()">Borrar último</button>
+        <button class="btn rosa sm" id="bCancelar" onclick="cancelar()">Cancelar venta</button>
+        <button class="btn grande" id="bCobrar" onclick="cobrar()">Cobrar</button>
+      </div>
+      <p class="hint">Atajos: teclas 1 a 9 escanean, Ctrl+Z borra el último, Ctrl+Enter cobra.</p>
+    </section>
+  </div>
+</section>
+
+<section id="tab-familias" class="tab-panel">
+  <div class="grid2">
+    <section class="card">
+      <h2>Familias y puntos</h2><p class="que" id="queFam"></p>
+      <div id="familias"></div>
+      <h3>Unir dos clientes en una familia</h3>
+      <div class="fila"><select id="padre" aria-label="Cliente 1"></select><span>con</span><select id="hijo" aria-label="Cliente 2"></select><button class="btn azul sm" onclick="unirLista()">Unir</button></div>
+      
+      <h3>¿Son de la misma familia?</h3>
+      <div class="fila"><select id="selA" aria-label="Cliente A"></select><select id="selB" aria-label="Cliente B"></select><button class="btn gris sm" onclick="mismo()">Comprobar</button></div>
+      <p id="resMismo" role="status" style="margin:4px 0;font-weight:700"></p>
+      <details><summary>Agregar un cliente nuevo</summary>
+        <div class="fila"><input id="nom" type="text" placeholder="Nombre" aria-label="Nombre"><input id="edad" type="number" min="0" max="120" value="30" aria-label="Edad"><label><input id="emb" type="checkbox"> Embarazo</label><button class="btn gris sm" onclick="crear()">Crear</button></div></details>
+    </section>
+    <section class="card">
+      <h2>Historial de hoy <small id="totalDia"></small></h2><p class="que">Ventas cobradas hoy; la más reciente arriba.</p>
+      <ul id="hist"></ul>
+    </section>
+  </div>
+</section>
+
+<section id="tab-estructuras" class="tab-panel">
+  <p class="que"><b>Esta pestaña es para estudiar; no hace falta para vender.</b> Muestra cómo guarda el programa los datos mientras usted atiende clientes en la pestaña Caja.</p>
+  <div class="est-grid">
+    <div class="card"><h2>Cola (FIFO)</h2><p class="que">Fila normal: el primero que llega es el primero en salir. Ingresar y atender: O(1).</p><div class="viz" id="v-cola"></div></div>
+    <div class="card"><h2>Cola de prioridad (Min-Heap)</h2><p class="que">Caja preferencial: el próximo siempre está en la raíz. Ingresar y atender: O(log n).</p><div class="viz" id="v-heap"></div></div>
+    <div class="card"><h2>Pila (LIFO)</h2><p class="que">«Borrar último»: lo último que se escaneó es lo primero que se quita. O(1).</p><div class="viz" id="v-pila"></div></div>
+    <div class="card"><h2>Bag (bolsa)</h2><p class="que">Carrito: se permiten repetidos y el orden no importa. Agregar: O(1).</p><div class="viz" id="v-bolsa"></div></div>
+    <div class="card"><h2>Lista doblemente enlazada</h2><p class="que">Historial del día: agregar al final es O(1) y se recorre en ambos sentidos.</p><div class="viz" id="v-lista"></div></div>
+    <div class="card"><h2>Union-Find (base 1)</h2><p class="que">Familias: si padre[i] = i, i es la raíz del grupo. «Misma familia» = misma raíz. O(α(n)).</p><div class="viz" id="v-uf"></div></div>
+  </div>
+</section>
+
+<section id="tab-tiempos" class="tab-panel">
+  <div class="card">
+    <h2>Tiempo de cada operación <button class="btn gris sm" style="float:right" onclick="reiniciarMedidas()">Reiniciar medidas</button></h2>
+    <p class="que">Las estructuras en memoria tardan microsegundos; PostgreSQL, milisegundos. Por eso el programa decide en memoria y guarda en la base lo permanente.</p>
+    <div class="resumen" id="resumenM"></div>
+    <div style="overflow-x:auto" id="metricas"></div>
+  </div>
+  <div class="card" style="margin-top:18px"><h2>Bitácora (logs)</h2><p class="que">También se guarda en el archivo logs/pos-0.log.</p><pre id="log" tabindex="0" aria-label="Últimas líneas de la bitácora"></pre></div>
+</section>
+</main>
+<div id="toasts" aria-live="polite"></div>
+<dialog id="recibo" aria-label="Recibo de la venta"></dialog>
+<dialog id="ayuda" aria-label="Guía de uso"></dialog>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const money=n=>'$'+Number(n).toLocaleString('es-CO');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const EMOJI={'Manzana':'🍎','Leche':'🥛','Pan':'🍞','Arroz 1 kg':'🍚','Huevos x12':'🥚','Café':'☕','Aceite':'🫒','Jabón':'🧼'};
+const ini=n=>String(n).split(/\s+/).slice(0,2).map(p=>p[0]||'').join('').toUpperCase();
+const avatar=(id,n,cls='')=>{const h=(id*47)%360;return `<span class="av ${cls}" style="background:hsl(${h} 70% 88%);color:hsl(${h} 40% 28%)" aria-hidden="true">${esc(ini(n))}</span>`;};
+const fmt=us=>us>=1000?(us/1000).toFixed(2)+' ms':us.toFixed(2)+' µs';
+let E=null,demoOn=false,dormir=ms=>new Promise(r=>setTimeout(r,ms)),pasoAyuda=0;
+
+function toast(t,tipo='ok'){const e=document.createElement('div');e.className='toast '+tipo;e.setAttribute('role','status');e.textContent=t;$('#toasts').append(e);setTimeout(()=>e.remove(),4000);}
+async function api(path,params){
+  const get=path==='/estado'||path==='/familia/mismo';
+  const r=await fetch('/api'+path+'?'+new URLSearchParams(params||{}),{method:get?'GET':'POST'});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||'Error del servidor');return d;
+}
+async function accion(path,params,ok){
+  try{const d=await api(path,params);await cargar();if(ok)toast(ok);return d;}catch(e){toast(e.message,'err');}
+}
+async function cargar(){E=await api('/estado');pintar();}
+$$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b);});$$('.tab-panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+b.dataset.tab));});
+
+/* ---------- pintar ---------- */
+function pintar(){pintarBuscador();pintarPerfil();pintarFilas();pintarCaja();pintarFamilias();pintarHistorial();pintarEstructuras();pintarTiempos();pintarGuia();}
+const norm=t=>String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+function pintarBuscador(){
+  $('#listaClientes').innerHTML=E.clientes.map(c=>`<option value="${esc(c.nombre)}"></option>`).join('');
+  $('#chips').innerHTML=E.clientes.map(c=>`<button onclick="elegir(${c.id})">${esc(c.nombre.split(' ')[0])}</button>`).join('');
+  const opts=E.clientes.map(c=>`<option value="${c.id}">${esc(c.nombre)}</option>`).join('');
+  ['padre','hijo','selA','selB'].forEach(id=>{const s=document.getElementById(id),v=s.value;s.innerHTML=opts;if(v)s.value=v;});
+}
+function elegir(id){$('#buscar').value=E.clientes.find(c=>c.id===id).nombre;pintarPerfil();}
+function pintarPerfil(){
+  if(!E)return;
+  const txt=$('#buscar').value,q=norm(txt),R=E.reglas;
+  let c=null,parc=[];
+  if(q){const ex=E.clientes.filter(x=>norm(x.nombre)===q);parc=ex.length?ex:E.clientes.filter(x=>norm(x.nombre).includes(q));if(parc.length===1)c=parc[0];}
+  const el=$('#perfil');
+  if(!q){el.innerHTML='';return;}
+  if(c){
+    const enF=E.enCaja.includes(c.id),miembros=E.clientes.filter(x=>x.familia===c.familia),p=c.puntosGrupo,desc=p>=R.umbralPuntos;
+    const destino=c.embarazada?'la caja preferencial (embarazo)':c.edad>=R.edadAdultoMayor?'la caja preferencial (65 años o más)':'la fila normal';
+    el.innerHTML=`<div class="perfil"><div class="fila-p">${avatar(c.id,c.nombre)}<div class="info"><b>${esc(c.nombre)}</b><small>${c.edad} años · ${c.puntos} puntos propios</small></div></div><ul class="datos"><li>${miembros.length>1?'Familia: '+miembros.map(x=>esc(x.nombre.split(' ')[0])).join(', ')+' · '+p+' puntos juntos':'Sin familia registrada'}</li><li class="${desc?'si':''}">${desc?'Tiene descuento del '+R.descuentoPorcentaje+' % en esta compra':'Sin descuento por ahora (faltan '+(R.umbralPuntos-p)+' puntos)'}</li><li>Irá a ${destino}</li></ul><button class="btn" ${enF?'disabled':''} onclick="llegada(${c.id})">${enF?'Ya está en caja':'Poner en fila'}</button></div>`;
+  }else if(parc.length>1){
+    el.innerHTML=`<div class="perfil"><p>Varios clientes coinciden. Elija uno:</p><div class="chips">${parc.map(x=>`<button onclick="elegir(${x.id})">${esc(x.nombre)}</button>`).join('')}</div></div>`;
+  }else{
+    el.innerHTML=`<div class="perfil"><p>«${esc(txt.trim())}» no está registrado. Complete estos datos para registrarlo:</p><div class="fila"><input id="nEdad" type="number" min="0" max="120" placeholder="Edad" aria-label="Edad"><label><input id="nEmb" type="checkbox"> Embarazo</label></div><button class="btn" onclick="registrarYPoner()">Registrar y poner en fila</button></div>`;
+  }
+}
+function pintarFilas(){
+  const li=t=>`<li>${esc(t.nombre)}<small>${['embarazo','65 años o más',''][t.prioridad]}</small></li>`;
+  $('#fNormal').innerHTML=E.normal.map(li).join('')||'<li class="vacio" style="list-style:none;margin-left:-22px">Nadie en espera</li>';
+  $('#fPref').innerHTML=E.preferencial.map(li).join('')||'<li class="vacio" style="list-style:none;margin-left:-22px">Nadie en espera</li>';
+  $('#cntN').textContent=E.normal.length;$('#cntP').textContent=E.preferencial.length;
+}
+function pintarCaja(){
+  const at=E.atendiendo;
+  const cli=at&&E.clientes.find(c=>c.id===at.clienteId),conDesc=cli&&cli.puntosGrupo>=E.reglas.umbralPuntos;
+  $('#actual').innerHTML=at?`Atendiendo a ${esc(at.nombre)}${conDesc?` <span class="chip">Descuento familiar ${E.reglas.descuentoPorcentaje} %</span>`:''}`:'Nadie está en la caja todavía.';
+  $('#productos').innerHTML=E.productos.map(p=>`<button class="prod ${at?'':'off'}" onclick="escanear(event,${p.id})" aria-label="Escanear ${esc(p.nombre)}"><span class="em">${EMOJI[p.nombre]||'🛒'}</span><b>${esc(p.nombre)}</b><small>${money(p.precio)}</small></button>`).join('');
+  const total=E.subtotal-E.descuento;
+  $('#ticket').innerHTML=at?(E.items.map(i=>`<div class="l"><span>${i.cantidad} × ${esc(i.nombre)}</span><span>${money(i.subtotal)}</span></div>`).join('')||`<p class="vacio" style="margin:0">Toque un producto para escanearlo.${conDesc?' El descuento familiar se aplicará al total.':''}</p>`)+`<hr>${E.descuento?`<div class="l"><span>Subtotal</span><span>${money(E.subtotal)}</span></div><div class="l desc"><span>Descuento familiar (${E.reglas.descuentoPorcentaje} %)</span><span>−${money(E.descuento)}</span></div>`:''}<div class="l tot"><span>Total a pagar</span><span>${money(total)}</span></div>`:'<p class="vacio" style="margin:0">El ticket aparece cuando atiende a un cliente.</p>';
+  const off=(id,c)=>$(id).classList.toggle('off',c);off('#bDeshacer',!at||!E.items.length);off('#bCancelar',!at);off('#bCobrar',!at||!E.items.length);
+}
+function pintarFamilias(){
+  const R=E.reglas,g={};$('#queFam').textContent=`Cada ${money(R.pesosPorPunto)} pagados dan 1 punto. Si una familia junta ${R.umbralPuntos} puntos, todos sus miembros reciben ${R.descuentoPorcentaje} % de descuento.`;
+  E.clientes.forEach(c=>(g[c.familia]=g[c.familia]||[]).push(c));
+  const fam=Object.values(g).filter(m=>m.length>1);
+  $('#familias').innerHTML=fam.map(m=>{const p=m[0].puntosGrupo;return `<div class="fam"><b>${esc(m.map(c=>c.nombre.split(' ')[0]).join(' + '))}</b><small>${p} puntos juntos · ${p>=R.umbralPuntos?'descuento del '+R.descuentoPorcentaje+' % activo':'faltan '+(R.umbralPuntos-p)+' para el descuento'}</small></div>`;}).join('')||'<p class="vacio">Todavía no hay familias.</p>';
+}
+function pintarHistorial(){
+  const h=E.historial;$('#totalDia').textContent=h.length?`· ${h.length} ventas, ${money(h.reduce((s,r)=>s+r.total,0))}`:'';
+  $('#hist').innerHTML=h.map(r=>`<li class="venta"><small>#${r.id}</small><div><b>${esc(r.cliente||'—')}</b><small>${esc(r.hora)} · +${r.puntos} puntos${r.descuento?' · ahorró '+money(r.descuento):''}</small></div><b>${money(r.total)}</b></li>`).join('')||'<li class="vacio">Todavía no hay ventas hoy.</li>';
+}
+function arbol(h){
+  if(!h.length)return '<p class="vacio">Heap vacío.</p>';
+  const N=Math.min(h.length,15),W=560,niv=Math.floor(Math.log2(N))+1,H=50+(niv-1)*64;
+  const pos=i=>{const d=Math.floor(Math.log2(i)),k=i-Math.pow(2,d);return[(k+.5)/Math.pow(2,d)*W,26+d*64];};
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="tree" role="img" aria-label="Árbol del Min-Heap">`;
+  for(let i=2;i<=N;i++){const[x,y]=pos(i),[px,py]=pos(Math.floor(i/2));s+=`<line x1="${px}" y1="${py}" x2="${x}" y2="${y}"/>`;}
+  for(let i=1;i<=N;i++){const t=h[i-1],[x,y]=pos(i);s+=`<g class="nodo p${t.prioridad} ${i===1?'raiz':''}"><circle cx="${x}" cy="${y}" r="21"/><text x="${x}" y="${y+4}" text-anchor="middle">${esc(ini(t.nombre))}</text><title>${esc(t.nombre)} · prioridad ${t.prioridad}</title></g>`;}
+  return s+'</svg><div class="arr">'+h.map((t,i)=>`<span title="${esc(t.nombre)}">${i+1}: ${esc(ini(t.nombre))} (p${t.prioridad})</span>`).join('')+'</div><small>Contorno oscuro = próximo en ser atendido. Naranja: prioridad 0 · Azul: prioridad 1.</small>';
+}
+function pintarEstructuras(){
+  const S=E.estructuras,vac=t=>`<p class="vacio">${t}</p>`;
+  $('#v-cola').innerHTML=S.cola.length?`<div class="cadena"><span class="et">sale ←</span>${S.cola.map(t=>`<span class="nodo-c">${avatar(t.clienteId,t.nombre,'sm')}${esc(t.nombre.split(' ')[0])}</span>`).join('')}<span class="et">← entra</span></div>`:vac('La fila normal está vacía.');
+  $('#v-heap').innerHTML=arbol(S.heap);
+  $('#v-pila').innerHTML=S.pila.length?`<div class="torre">${S.pila.map((n,i)=>`<div class="bloque"><span>${EMOJI[n]||''} ${esc(n)}</span>${i===0?'<span>tope</span>':''}</div>`).join('')}</div>`:vac('Pila vacía: nada que deshacer.');
+  $('#v-bolsa').innerHTML=S.bolsa.length?`<div class="bolsa">${S.bolsa.map(n=>`<span>${EMOJI[n]||''} ${esc(n)}</span>`).join('')}</div>`:vac('Bolsa vacía.');
+  const k=S.listaTotal-S.lista.length;
+  $('#v-lista').innerHTML=S.lista.length?`<div class="doble"><span class="et">inicio</span>${k>0?`<span class="et">… (+${k}) ⇄</span>`:''}${S.lista.map((r,i)=>`${i?'<span class="et">⇄</span>':''}<span class="nd">#${r.id}<small>${esc((r.cliente||'').split(' ')[0])} · ${money(r.total)}</small></span>`).join('')}<span class="et">final</span></div>`:vac('Todavía no hay ventas en la lista.');
+  const p=S.padres,n=p.length-1,raiz=x=>{while(p[x]!==x)x=p[x];return x;};
+  const ids=[...Array(n).keys()].map(i=>i+1),gr={};ids.forEach(i=>(gr[raiz(i)]=gr[raiz(i)]||[]).push(i));
+  const nom=id=>(E.clientes.find(c=>c.id===id)||{nombre:'#'+id}).nombre.split(' ')[0];
+  $('#v-uf').innerHTML=n?`<div class="uf"><table><tr><th>índice</th>${ids.map(i=>`<td>${i}</td>`).join('')}</tr><tr><th>cliente</th>${ids.map(i=>`<td title="${esc(nom(i))}">${esc(nom(i).slice(0,4))}</td>`).join('')}</tr><tr><th>padre[i]</th>${ids.map(i=>`<td class="${p[i]===i?'raiz':''}">${p[i]}</td>`).join('')}</tr></table></div><div>${Object.values(gr).map(m=>`<span class="chip">${m.length>1?'Familia':'Solo'}: ${m.map(nom).map(esc).join(', ')}</span>`).join('')}</div><small>Casilla verde = raíz (padre[i] = i).</small>`:vac('Sin clientes.');
+}
+function pintarTiempos(){
+  const M=E.metricas,mx=Math.max(1,...M.map(m=>m.promedioUs)),esDb=m=>m.operacion.startsWith('PostgreSQL');
+  const avg=a=>a.length?a.reduce((s,m)=>s+m.promedioUs,0)/a.length:0;
+  $('#resumenM').innerHTML=`<div><small>Promedio de las estructuras (memoria)</small><b>${fmt(avg(M.filter(m=>!esDb(m))))}</b></div><div><small>Promedio de PostgreSQL</small><b>${fmt(avg(M.filter(esDb)))}</b></div><div><small>Operaciones medidas</small><b>${M.reduce((s,m)=>s+m.llamadas,0)}</b></div>`;
+  $('#metricas').innerHTML=M.length?`<table class="m"><thead><tr><th>Operación</th><th>Llamadas</th><th>Promedio</th><th>Máximo</th><th>Escala</th></tr></thead><tbody>${M.map(m=>`<tr><td>${esc(m.operacion)}</td><td>${m.llamadas}</td><td>${fmt(m.promedioUs)}</td><td>${fmt(m.maxUs)}</td><td class="barra"><i class="${esDb(m)?'db':'mem'}" style="width:${Math.max(2,Math.round(Math.log10(1+m.promedioUs)/Math.log10(1+mx)*100))}%"></i></td></tr>`).join('')}</tbody></table>`:'<p class="vacio">Todavía no hay mediciones.</p>';
+  const lg=$('#log');lg.textContent=E.bitacora.join('\n');lg.scrollTop=lg.scrollHeight;
+}
+function pintarGuia(){
+  const at=E.atendiendo,n=E.normal.length+E.preferencial.length;let txt,obj=[];
+  if(!at&&!n){txt='Paso 1 de 4 · Escriba el nombre del cliente y pulse «Poner en fila».';obj=['#buscar'];}
+  else if(!at){txt=`Paso 2 de 4 · Hay ${n} cliente${n>1?'s':''} esperando. Pulse «Llamar siguiente» en una de las filas.`;obj=[E.preferencial.length?'#lanep .btn':null,E.normal.length?'#lanen .btn':null].filter(Boolean);}
+  else if(!E.items.length){txt=`Paso 3 de 4 · Atendiendo a ${at.nombre}. Toque los productos que lleva.`;obj=['#productos .prod'];}
+  else{txt='Paso 4 de 4 · Pulse «Cobrar» para terminar la venta. Si se equivocó, use «Borrar último».';obj=['#bCobrar'];}
+  $$('.ahora').forEach(x=>x.classList.remove('ahora'));
+  if(!demoOn){obj.forEach(q=>$$(q).forEach(x=>x.classList.add('ahora')));$('#guiaTexto').textContent=txt;}
+}
+
+/* ---------- acciones ---------- */
+function exigir(c,m){if(c)return true;toast(m,'err');return false;}
+async function llegada(id){
+  const c=E.clientes.find(x=>x.id===id),d=await accion('/llegada',{cliente:id});
+  if(d){toast(`${c.nombre} entró a la ${d.caja==='preferencial'?'caja preferencial':'fila normal'}.`);$('#buscar').value='';pintarPerfil();}
+}
+async function registrarYPoner(){
+  const nombre=$('#buscar').value.trim(),edad=$('#nEdad').value;
+  if(!exigir(edad!=='','Escriba la edad del cliente para registrarlo.'))return;
+  const d=await accion('/cliente',{nombre,edad,embarazada:$('#nEmb').checked});
+  if(d)await llegada(d.id);
+}
+const sig=c=>accion('/siguiente',{caja:c});
+function escanear(ev,id){if(!exigir(E&&E.atendiendo,'Primero llame a un cliente de una fila (paso 2).'))return;return accion('/escanear',{producto:id});}
+const deshacer=()=>{if(!exigir(E.atendiendo&&E.items.length,'Todavía no hay nada que borrar: primero escanee un producto.'))return;return accion('/deshacer',null,'Último producto quitado.');};
+const cancelar=()=>{if(!exigir(E.atendiendo,'No hay ninguna venta para cancelar.'))return;return accion('/cancelar',null,'Venta cancelada.');};
+async function cobrar(){
+  if(!exigir(E.atendiendo,'Primero llame a un cliente de una fila (paso 2).')||!exigir(E.items.length,'El carrito está vacío: escanee al menos un producto.'))return;
+  const items=E.items,d=await accion('/cobrar');if(d)mostrarRecibo(d,items);
+}
+function mostrarRecibo(d,items){
+  const dl=$('#recibo');
+  dl.innerHTML=`<div class="modal"><h3>Venta #${d.id} cobrada</h3><p>${esc(d.cliente)} · ${esc(d.hora)}</p><div class="ticket">${items.map(i=>`<div class="l"><span>${i.cantidad} × ${esc(i.nombre)}</span><span>${money(i.subtotal)}</span></div>`).join('')}<hr><div class="l"><span>Subtotal</span><span>${money(d.subtotal)}</span></div><div class="l desc"><span>Descuento familiar</span><span>−${money(d.descuento)}</span></div><div class="l tot"><span>Total</span><span>${money(d.total)}</span></div></div><p>Ganó ${d.puntos} puntos.</p><button class="btn" onclick="cerrarRecibo()">Listo</button></div>`;
+  if(dl.showModal)dl.showModal();else dl.setAttribute('open','');
+}
+function cerrarRecibo(){const dl=$('#recibo');if(dl.close)dl.close();else dl.removeAttribute('open');}
+async function mismo(){try{const d=await api('/familia/mismo',{a:$('#selA').value,b:$('#selB').value});$('#resMismo').textContent=d.mismo?'Sí, son de la misma familia.':'No son de la misma familia.';}catch(e){toast(e.message,'err');}}
+const unirLista=()=>accion('/familia',{padre:$('#padre').value,hijo:$('#hijo').value},'Familia creada: ahora comparten puntos.');
+async function crear(){const d=await accion('/cliente',{nombre:$('#nom').value,edad:$('#edad').value,embarazada:$('#emb').checked},'Cliente creado.');if(d){$('#nom').value='';$('#emb').checked=false;}}
+const reiniciarMedidas=()=>accion('/metricas/reiniciar',null,'Medidas reiniciadas.');
+
+/* ---------- ayuda y demostración ---------- */
+const AYUDA=[
+ {t:'Bienvenido',p:'Este programa simula la caja de una tienda: los clientes llegan, esperan en fila, se escanean sus productos y se cobra. Los clientes ganan puntos, y las familias pueden juntarlos para obtener descuento.'},
+ {t:'Paso 1 · Escriba el nombre',p:'Escriba el nombre del cliente: el sistema muestra su familia, sus puntos y si tiene descuento. Pulse «Poner en fila»: irá a la fila normal o, si está embarazada o tiene 65 años o más, a la caja preferencial.'},
+ {t:'Pasos 2, 3 y 4 · Llamar, escanear y cobrar',p:'Pulse «Llamar siguiente» para pasar al cliente a la caja. Toque los productos que lleva; si se equivoca, «Borrar último» quita el último. Al final verá el total a pagar con su descuento (si lo tiene) y pulse «Cobrar».'},
+ {t:'Familias y descuento',p:'En «Familias e historial» puede unir clientes en una familia. Cada $1.000 pagados dan 1 punto; cuando la familia junta 20 puntos, todos reciben 10 % de descuento.'},
+ {t:'¿Quiere verlo funcionando?',p:'La demostración atiende a tres clientes y registra una venta de ejemplo, explicando cada paso. Las pestañas «Por dentro» y «Tiempos y registros» son para estudiar el programa; no hacen falta para vender.'}
+];
+function pintarAyuda(){
+  const a=AYUDA[pasoAyuda],ult=pasoAyuda===AYUDA.length-1;
+  $('#ayuda').innerHTML=`<div class="modal"><h3>${a.t}</h3><p>${a.p}</p><div class="puntos" aria-hidden="true">${AYUDA.map((_,k)=>`<i class="${k===pasoAyuda?'on':''}"></i>`).join('')}</div><div class="nav">${pasoAyuda?'<button class="btn gris" onclick="ayudaMover(-1)">Anterior</button>':'<button class="btn gris" onclick="cerrarAyuda()">Saltar</button>'}${ult?'<button class="btn lila" onclick="demo()">Ver demostración</button><button class="btn" onclick="cerrarAyuda()">Empezar</button>':'<button class="btn" onclick="ayudaMover(1)">Siguiente</button>'}</div></div>`;
+}
+function ayudaMover(d){pasoAyuda=Math.max(0,Math.min(AYUDA.length-1,pasoAyuda+d));pintarAyuda();}
+function abrirAyuda(i){pasoAyuda=i;pintarAyuda();const d=$('#ayuda');if(d.showModal){if(!d.open)d.showModal();}else d.setAttribute('open','');}
+function cerrarAyuda(){const d=$('#ayuda');try{localStorage.setItem('ayudaVista','1');}catch(_){}if(d.close)d.close();else d.removeAttribute('open');}
+function detenerDemo(){demoOn=false;}
+async function demo(){
+  cerrarAyuda();
+  if(demoOn)return;
+  if(E.atendiendo||E.enCaja.length){toast('Para la demostración, primero termine o cancele las ventas en curso y vacíe las filas.','err');return;}
+  const cid=n=>(E.clientes.find(c=>c.nombre.startsWith(n))||{}).id,pid=n=>(E.productos.find(p=>p.nombre===n)||{}).id;
+  const a=cid('Ana'),m=cid('Marta'),l=cid('Laura'),leche=pid('Leche'),pan=pid('Pan');
+  if(![a,m,l,leche,pan].every(Boolean)){toast('La demostración usa los datos de ejemplo (Ana, Marta, Laura, Leche y Pan).','err');return;}
+  $('.tab[data-tab=caja]').click();
+  demoOn=true;$('#btnStopDemo').hidden=false;$('#btnDemo').hidden=true;$$('.ahora').forEach(x=>x.classList.remove('ahora'));
+  const paso=async(txt,fn,espera=2600)=>{
+    if(!demoOn)return;
+    $('#guiaTexto').textContent='Demostración · '+txt;
+    try{await fn();await cargar();}catch(e){toast(e.message,'err');demoOn=false;return;}
+    await dormir(espera);
+  };
+  await paso('Llegan tres clientes, en este orden: Ana, Marta (72 años) y Laura (embarazada).',async()=>{await api('/llegada',{cliente:a});await api('/llegada',{cliente:m});await api('/llegada',{cliente:l});},3800);
+  await paso('Ana va a la fila normal. Marta y Laura van a la caja preferencial, y Laura pasa primero porque el embarazo tiene prioridad, aunque llegó después.',async()=>{},5200);
+  await paso('Llamamos al siguiente de la caja preferencial: es Laura.',()=>api('/siguiente',{caja:'preferencial'}));
+  await paso('Escaneamos una leche…',()=>api('/escanear',{producto:leche}),1800);
+  await paso('…un pan…',()=>api('/escanear',{producto:pan}),1800);
+  await paso('…y otra leche (el ticket las agrupa).',()=>api('/escanear',{producto:leche}),2200);
+  await paso('La última leche fue un error: «Borrar último» la quita.',()=>api('/deshacer'),2800);
+  let rec=null,items=[];
+  await paso('Ahora cobramos: la venta se guarda y Laura gana puntos.',async()=>{items=E.items;rec=await api('/cobrar');},300);
+  if(demoOn&&rec){mostrarRecibo(rec,items);await dormir(3800);cerrarRecibo();}
+  const termino=demoOn;demoOn=false;$('#btnStopDemo').hidden=true;$('#btnDemo').hidden=false;await cargar();
+  if(termino)toast('Demostración terminada. Marta y Ana siguen en fila: llámelas usted con «Llamar siguiente».');
+}
+
+/* ---------- teclado ---------- */
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)||!E||!$('#tab-caja').classList.contains('on'))return;
+  const ctrl=e.ctrlKey||e.metaKey;
+  if(ctrl&&e.key.toLowerCase()==='z'){e.preventDefault();if(E.atendiendo)deshacer();}
+  else if(ctrl&&e.key==='Enter'){e.preventDefault();if(E.atendiendo)cobrar();}
+  else if(!ctrl&&!e.altKey&&/^[1-9]$/.test(e.key)){const p=E.productos[+e.key-1];if(p&&E.atendiendo)escanear(null,p.id);}
+});
+cargar().then(()=>{try{if(!localStorage.getItem('ayudaVista'))abrirAyuda(0);}catch(_){}}).catch(e=>toast('No se pudo conectar con el servidor: '+e.message,'err'));
+</script>
+</body></html>

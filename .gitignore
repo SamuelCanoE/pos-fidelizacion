@@ -1,0 +1,13 @@
+# Maven
+target/
+# IntelliJ / VS Code
+.idea/
+*.iml
+.vscode/
+out/
+# Logs generados al ejecutar
+logs/
+*.log
+# Sistema operativo
+.DS_Store
+Thumbs.db
